@@ -3,9 +3,6 @@ class Plant:
         self.name = name
         self.height = height
         self.age = age
-
-    def display(self):
-        print(f"{self.name}: {self.height}cm, {self.age} days old")
     
 if __name__ == "__main__":
     rose = Plant("Rose", 25, 30)
@@ -17,4 +14,4 @@ if __name__ == "__main__":
     print("=== Garden Plant Registry ===")
     len_of_array = len(plants)
     for i in range(len_of_array):
-        plants[i].display()
+        print(f"{plants[i].name}: {plants[i].height}cm, {plants[i].age} days old")
