@@ -1,16 +1,29 @@
 class Plant:
-    def __init__(self, name: str, height: int, age: int) -> None:
+    def __init__(self, name: str, height: int, age_days: int) -> None:
         self.name = name
         self.height = height
-        self.age = age
+        self.age_days = age_days
 
     def grow(self, height_increase: int) -> None:
         self.height += height_increase
     
     def age(self, days: int) -> None:
-        self.age += days
+        self.age_days += days
 
     def get_info(self) -> str:
-        return f"{self.name}: {self.height}cm, {self.age} days old"
+        return f"{self.name}: {self.height}cm, {self.age_days} days old"
 
+def main() -> None:
+    rose = Plant("Rose", 25, 30)
+    height_before_grow = rose.height
+    print(f"=== Day 1 ===")
+    print(rose.get_info())
+    for _ in range(6):
+        rose.grow(1)
+        rose.age(1)
+    print(f"=== Day 7 ===")
+    print(rose.get_info())
+    print(f"Growth this week: +{rose.height - height_before_grow}cm")
 
+if __name__ == "__main__":
+    main()
