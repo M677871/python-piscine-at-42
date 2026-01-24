@@ -1,92 +1,72 @@
-"""Exercise 6: Garden Analytics Platform"""
-
-
 class Plant:
-    """Base plant."""
-
-    def __init__(self, name: str, height: int):
+    def __init__(self, name: str, height: int, age: int) -> None:
         self.name = name
         self.height = height
-
-    def grow(self):
-        """Grow plant."""
-        self.height += 1
-        print(f"{self.name} grew 1cm")
+        self.age = age
 
 
-class FloweringPlant(Plant):
-    """Flowering plant."""
-
-    def __init__(self, name: str, height: int, color: str):
-        super().__init__(name, height)
+class Flower(Plant):
+    def __init__(self, name: str, height: int, age: int, color: str) -> None:
+        super().__init__(name, height, age)
         self.color = color
-        self.blooming = True
+
+    def bloom(self) -> None:
+        print(f"{self.name} is blooming beautifully!")
 
 
-class PrizeFlower(FloweringPlant):
-    """Prize flower."""
+class Tree(Plant):
+    def __init__(self, n: str, h: int, age: int, td: int) -> None:
+        super().__init__(n, h, age)
+        self.td = td
 
-    def __init__(self, name: str, height: int, color: str, points: int):
-        super().__init__(name, height, color)
-        self.points = points
-
-
-class GardenManager:
-    """Manages multiple gardens."""
-
-    total_gardens = 0
-
-    class GardenStats:
-        """Statistics helper."""
-
-        @staticmethod
-        def validate_height(height: int) -> bool:
-            """Validate height."""
-            return height >= 0
-
-    def __init__(self, owner: str):
-        self.owner = owner
-        self.plants = []
-        GardenManager.total_gardens += 1
-
-    def add_plant(self, plant: Plant):
-        """Add plant to garden."""
-        self.plants.append(plant)
-        print(f"Added {plant.name} to {self.owner}'s garden")
-
-    def grow_all(self):
-        """Grow all plants."""
-        print(f"{self.owner} is helping all plants grow...")
-        for plant in self.plants:
-            plant.grow()
-
-    @classmethod
-    def create_garden_network(cls):
-        """Create garden network."""
-        print(f"Total gardens managed: {cls.total_gardens}")
+    def produce_shade(self) -> None:
+        shade = self.td * 1.56
+        print(f"{self.name} provides {int(shade)} square meters of shade")
 
 
-def main():
-    """Program entry point."""
-    print("=== Garden Management System Demo ===")
+class Vegetable(Plant):
+    def __init__(self, name: str, h: int, age: int,
+                 harvest_season: str, nutritional_value: str) -> None:
+        super().__init__(name, h, age)
+        self.harvest_season = harvest_season
+        self.nutrional_value = nutritional_value
 
-    alice = GardenManager("Alice")
-    bob = GardenManager("Bob")
+    def info(self) -> None:
+        print(f"{self.name} is rich in {self.nutrional_value}")
 
-    oak = Plant("Oak Tree", 100)
-    rose = FloweringPlant("Rose", 25, "red")
-    sunflower = PrizeFlower("Sunflower", 50, "yellow", 10)
 
-    alice.add_plant(oak)
-    alice.add_plant(rose)
-    alice.add_plant(sunflower)
+def main() -> None:
+    print("=== Garden Plant Types ===")
 
-    alice.grow_all()
+    rose = Flower("Rose", 25, 30, "red")
+    tulip = Flower("Tulip", 5, 10, "yellow")
 
-    print("Height validation test:",
-          GardenManager.GardenStats.validate_height(-5))
+    oak = Tree("Oak", 500, 1825, 50)
+    cedar = Tree("Cedar", 1000, 5555, 100)
 
-    GardenManager.create_garden_network()
+    tomato = Vegetable("Tomato", 80, 90, "summer", "vitamin C")
+    cucumber = Vegetable("Cucumber", 30, 40, "summer", "vitamin A")
+
+    print(f"{rose.name} (Flower): {rose.height}cm, "
+          f"{rose.age} days, {rose.color} color")
+    rose.bloom()
+    print(f"{tulip.name} (Flower): {tulip.height}cm, "
+          f"{tulip.age} days, {tulip.color} color")
+    tulip.bloom()
+
+    print(f"{oak.name} (Tree): {oak.height}cm, {oak.age} days, "
+          f"{oak.td}cm diameter")
+    oak.produce_shade()
+    print(f"{cedar.name} (Tree): {cedar.height}cm, {cedar.age} days, "
+          f"{cedar.td}cm diameter")
+    cedar.produce_shade()
+
+    print(f"{tomato.name} (Vegetable): {tomato.height}cm, {tomato.age} days, "
+          f"{tomato.harvest_season} harvest")
+    tomato.info()
+    print(f"{cucumber.name} (Vegetable): {cucumber.height}cm, "
+          f"{cucumber.age} days, {cucumber.harvest_season} harvest")
+    cucumber.info()
 
 
 if __name__ == "__main__":
