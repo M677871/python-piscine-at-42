@@ -1,82 +1,93 @@
+"""Exercise 6: Garden Analytics Platform"""
+
+
 class Plant:
-    def __init__(self, name: str, height: int, age: int) -> None:
+    """Base plant."""
+
+    def __init__(self, name: str, height: int):
         self.name = name
         self.height = height
-        self.age = age
-    
-    @property
-    def name(self) -> str:
-        return self._name
-    @name.setter
-    def name(self, value: str) -> None:
-        self._name = value
-    @property
-    def height(self) -> int:
-        return self._height
-    @height.setter
-    def height(self, value: int) -> None:
-        if value < 0:
-            self._height = 0
-            print("Security: Negative height rejected")
-        else:
-            self._height = value
-    @property
-    def age(self) -> int:
-        return self._age
-    @age.setter
-    def age(self, value: int) -> None:
-        if value < 0:
-            self._age = 0
-            print("Security: Negative age rejected")
-        else:
-            self._age = value
+
+    def grow(self):
+        """Grow plant."""
+        self.height += 1
+        print(f"{self.name} grew 1cm")
 
 
-class Flower(Plant):
-    def __init__(self, name: str, height: int, age: int, color: str) -> None:
-        super().__init__(name, height, age)
+class FloweringPlant(Plant):
+    """Flowering plant."""
+
+    def __init__(self, name: str, height: int, color: str):
+        super().__init__(name, height)
         self.color = color
+        self.blooming = True
 
-    @property
-    def color(self) -> str:
-        return self._color
 
-    def bloom(self) -> None:
-        print(f"{self._name} is blooming beautifully")
+class PrizeFlower(FloweringPlant):
+    """Prize flower."""
 
-class Tree(Plant):
-    def __init__(self, name: str, height: int, age: int, trunk_diameter: int) -> None:
-        super().__init__(name,height,age)
-        self.trunk_diameter = trunk_diameter
+    def __init__(self, name: str, height: int, color: str, points: int):
+        super().__init__(name, height, color)
+        self.points = points
 
-    @property
-    def trunk_diameter(self) -> int:
-        return self._trunk_diameter
 
-    @trunk_diameter.setter
-    def trunk_diameter(self, trunk_diameter: int) -> None:
-        if trunk_diameter < 0:
-            print("the truck diamter should be positive")
-            self._trunk_diameter = 0
-        else:
-            self._trunk_diameter = trunk_diameter
+class GardenManager:
+    """Manages multiple gardens."""
 
-    def produce_shade(self) -> None:
-        shade = self.trunk_diameter * 1.56
-        print(f"{self.name} provides {shade} square meters of shade")
+    total_gardens = 0
 
-class Vegetable(Plant):
-    def __init__(self, name: str, height: int, age: int,
-                 harvest_season: str, nutritional_value: str) -> None:
-        super().__init__(name, height, age)
-        self.harvest_season = harvest_season
-        self.nutrional_value = nutritional_value
+    class GardenStats:
+        """Statistics helper."""
 
-    def info(self) -> None:
-         print(f"{self.name} is rich in {self.nutritional_value}")
+        @staticmethod
+        def validate_height(height: int) -> bool:
+            """Validate height."""
+            return height >= 0
 
-def main() -> None:
-    print("=== Plant Types Test ===")
-    # rose = Flower("Rose", 25, 30, "Red")
-    # oak = Tree("Oak", 200, 365, 50)
-    # carrot = Vegetable("Carrot", 15, 120, "Fall", "Vitamin A")
+    def __init__(self, owner: str):
+        self.owner = owner
+        self.plants = []
+        GardenManager.total_gardens += 1
+
+    def add_plant(self, plant: Plant):
+        """Add plant to garden."""
+        self.plants.append(plant)
+        print(f"Added {plant.name} to {self.owner}'s garden")
+
+    def grow_all(self):
+        """Grow all plants."""
+        print(f"{self.owner} is helping all plants grow...")
+        for plant in self.plants:
+            plant.grow()
+
+    @classmethod
+    def create_garden_network(cls):
+        """Create garden network."""
+        print(f"Total gardens managed: {cls.total_gardens}")
+
+
+def main():
+    """Program entry point."""
+    print("=== Garden Management System Demo ===")
+
+    alice = GardenManager("Alice")
+    bob = GardenManager("Bob")
+
+    oak = Plant("Oak Tree", 100)
+    rose = FloweringPlant("Rose", 25, "red")
+    sunflower = PrizeFlower("Sunflower", 50, "yellow", 10)
+
+    alice.add_plant(oak)
+    alice.add_plant(rose)
+    alice.add_plant(sunflower)
+
+    alice.grow_all()
+
+    print("Height validation test:",
+          GardenManager.GardenStats.validate_height(-5))
+
+    GardenManager.create_garden_network()
+
+
+if __name__ == "__main__":
+    main()
