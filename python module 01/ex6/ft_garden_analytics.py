@@ -23,7 +23,7 @@ class FloweringPlant(Plant):
 
     def __str__(self) -> str:
         status = "blooming" if self.blooming else "not blooming"
-        return f"{self.name}: {self.height}cm, {self.color} flowers ({status})"
+        return f"{super().__str__()}, {self.color} flowers ({status})"
 
 
 class PrizeFlower(FloweringPlant):
