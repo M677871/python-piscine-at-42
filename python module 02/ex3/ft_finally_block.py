@@ -1,3 +1,8 @@
+class PlantError(Exception):
+    def __init__(self, message: str = "A plant error occurred."):
+        super().__init__(message)
+        
+
 def water_plants(plant_list: list[str | None]) -> bool:
     plant: str | None = None
 
@@ -5,10 +10,10 @@ def water_plants(plant_list: list[str | None]) -> bool:
     try:
         for plant in plant_list:
             if not plant:
-                raise ValueError("invalid plant")
+                raise PlantError(f"Error: Cannot water {plant} - invalid plant")
             print("Watering", plant)
-    except ValueError:
-        print("Error: Cannot water", plant, "- invalid plant!")
+    except PlantError as e:
+        print(e)
         return False
     finally:
         print("Closing watering system (cleanup)")
