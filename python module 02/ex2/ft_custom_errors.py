@@ -1,25 +1,26 @@
 class GardenError(Exception):
     """Base class for garden-related errors."""
+
     def __init__(self, message: str = "A garden error occured."):
         super().__init__(message)
 
 
 class PlantError(GardenError):
     """Error raised for plant-related problems."""
+
     def __init__(self, message: str = "A palnt-related error occured."):
         super().__init__(message)
 
 
 class WaterError(GardenError):
     """Error raised for watering-related problems."""
+
     def __init__(self, message: str = "A water-related error occured."):
         super().__init__(message)
-        
 
 
 def check_plant_health(plant_name: str) -> None:
     raise PlantError(f"The {plant_name} plant is wilting!")
-
 
 
 def check_water_tank(water_liters: int) -> None:
@@ -52,7 +53,5 @@ def main() -> None:
     print("All custom error types work correctly!")
 
 
-
 if __name__ == "__main__":
-        main()
-        
+    main()

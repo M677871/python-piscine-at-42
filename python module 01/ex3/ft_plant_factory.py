@@ -16,11 +16,11 @@ def main() -> None:
     sunflower = Plant("Sunflower", 80, 45)
     fern = Plant("Fern", 15, 120)
 
-    plants = [rose, oak, cactus, sunflower, fern]
-    total_plants = len(plants)
-
-    for i in range(total_plants):
-        print(f"Created: {plants[i].get_info()}")
+    plants: list[Plant] = [rose, oak, cactus, sunflower, fern]
+    total_plants = 0
+    for plant in plants:
+        print(f"Created: {plant.get_info()}")
+        total_plants += 1
     print(f"Total plants created: {total_plants}")
 
 

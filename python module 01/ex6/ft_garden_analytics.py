@@ -27,7 +27,9 @@ class FloweringPlant(Plant):
 
 
 class PrizeFlower(FloweringPlant):
-    def __init__(self, name: str, height: int, color: str, points: int) -> None:
+    def __init__(
+        self, name: str, height: int, color: str, points: int
+    ) -> None:
         super().__init__(name, height, color)
         self.points: int = points
 
@@ -96,11 +98,20 @@ class GardenManager:
         for plant in self.plants:
             print(f"- {plant}")
 
-        regular, flowering, prize = self.GardenStats.plant_type_count(self.plants)
+        regular, flowering, prize = self.GardenStats.plant_type_count(
+            self.plants
+        )
         growth = self.GardenStats.total_growth(self.plants)
 
-        print(f"Plants added: {len(self.plants)}, Total growth: {growth}cm")
-        print(f"Plant types: {regular} regular, {flowering} flowering, {prize} prize flowers")
+        plant_count = 0
+        for _ in self.plants:
+            plant_count += 1
+
+        print(f"Plants added: {plant_count}, Total growth: {growth}cm")
+        print(
+            f"Plant types: {regular} regular, {flowering} flowering, "
+            f"{prize} prize flowers"
+        )
 
     def score(self) -> int:
         return self.GardenStats.garden_score(self.plants)
@@ -129,8 +140,10 @@ def main() -> None:
     print("=== Alice's Garden Report ===")
     alice.report()
 
-    print("Height validation test:",
-          GardenManager.GardenStats.validate_height(5))
+    print(
+        "Height validation test:",
+        GardenManager.GardenStats.validate_height(5),
+    )
 
     print(
         f"Garden scores - Alice: {alice.score()}, Bob: {bob.score()}"

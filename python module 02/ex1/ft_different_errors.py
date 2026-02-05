@@ -17,7 +17,12 @@ def garden_operations() -> None:
         f = open("missing.txt", "r")
         f.close()
     except FileNotFoundError as e:
-        print("caught FileNotFoundError: No such File '", e.filename, "'", sep = "")
+        print(
+            "caught FileNotFoundError: No such File '",
+            e.filename,
+            "'",
+            sep="",
+        )
     print("Testing KeyError...")
     try:
         garden = {"rose": "needs water", "mint": "grow fast"}
@@ -27,12 +32,12 @@ def garden_operations() -> None:
     print("Testing multiple errors together...")
     try:
         _ = 1 / 0
-    except (ValueError , FileNotFoundError, ZeroDivisionError, KeyError):
+    except (ValueError, FileNotFoundError, ZeroDivisionError, KeyError):
         print("Caught an error, but program continues!")
     print("All error types tested successfully!")
 
 
-def  test_error_types() -> None:
+def test_error_types() -> None:
     garden_operations()
 
 

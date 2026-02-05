@@ -13,7 +13,5 @@ if __name__ == "__main__":
     plants: list[Plant] = [rose, sunflower, cactus]
 
     print("=== Garden Plant Registry ===")
-    len_of_array: int = len(plants)
-    for i in range(len_of_array):
-        print(f"{plants[i].name}: {plants[i].height}cm, "
-              f"{plants[i].age} days old")
+    for plant in plants:
+        print(f"{plant.name}: {plant.height}cm, {plant.age} days old")
