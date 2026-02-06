@@ -18,8 +18,8 @@ def generate_plants(count: int) -> list[Plant]:
     p: list[Plant] = [None] * count
     for i in range(count):
         name: str = plants[i % 5][0]
-        height: int = plants[i % 5][1] + (i % count)
-        age: int = plants[i % 5][2] + (7 + i % count)
+        height: int = plants[i % 5][1] + (i % count + 5)
+        age: int = plants[i % 5][2] + (76 + i % count)
         p[i] = Plant(name, height, age)
     return p
 
