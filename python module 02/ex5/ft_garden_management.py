@@ -12,18 +12,18 @@ class WaterError(GardenError):
 
 class GardenManager:
     def __init__(self) -> None:
-        self.plants: list[str] = []
+        self.plants: tuple[str, ...] = ()
 
     def add_plants(self, plant_name: str) -> None:
         if plant_name == "":
             raise PlantError("Plant name cannot be empty!")
-        self.plants.append(plant_name)
+        self.plants = self.plants + (plant_name, )
         print("Added", plant_name, "successfully")
 
     def check_plant_health(
         self, plant_name: str, water_level: int, sunlight_hours: int
     ) -> str:
-        if plant_name.strip() == "":
+        if plant_name == "":
             raise PlantError("Plant name cannot be empty!")
 
         if water_level < 1:
