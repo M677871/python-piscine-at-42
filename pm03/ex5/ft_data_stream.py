@@ -3,12 +3,10 @@ import time
 
 
 def print_header() -> None:
-    """Print application header."""
     print("=== Game Data Stream Processor ===")
 
 
 def game_event_generator(total_events: int) -> typing.Generator[str, None, None]:
-    """Generate game events on-demand using yield."""
     players: list[str] = ["alice", "bob", "charlie", "diana", "eve"]
     actions: list[str] = ["killed monster", "found treasure", "leveled up"]
     
@@ -27,7 +25,6 @@ def game_event_generator(total_events: int) -> typing.Generator[str, None, None]
 
 
 def fibonacci_generator(limit: int) -> typing.Generator[int, None, None]:
-    """Generate Fibonacci sequence using yield."""
     a: int = 0
     b: int = 1
     count: int = 0
@@ -39,7 +36,6 @@ def fibonacci_generator(limit: int) -> typing.Generator[int, None, None]:
 
 
 def is_prime(n: int) -> bool:
-    """Check if a number is prime."""
     if n < 2:
         return False
     i: int = 2
@@ -51,7 +47,6 @@ def is_prime(n: int) -> bool:
 
 
 def prime_generator(limit: int) -> typing.Generator[int, None, None]:
-    """Generate prime numbers using yield."""
     count: int = 0
     candidate: int = 2
     
@@ -64,25 +59,21 @@ def prime_generator(limit: int) -> typing.Generator[int, None, None]:
 
 def process_events_stream(event_stream: typing.Generator[str, None, None], 
                          show_first: int) -> tuple[int, int, int, int]:
-    """Process events from stream and collect statistics."""
     total_events: int = 0
     high_level_players: int = 0
     treasure_events: int = 0
     level_up_events: int = 0
     
     for event in event_stream:
-        # Show first few events
         if total_events < show_first:
             print(f"Event {total_events + 1}: {event}")
         elif total_events == show_first:
             print("...")
         
-        # Extract level from event
         level_start: int = event.find("level ") + 6
         level_end: int = event.find(")", level_start)
         level: int = int(event[level_start:level_end])
         
-        # Count statistics
         total_events += 1
         
         if level >= 10:
@@ -99,7 +90,6 @@ def process_events_stream(event_stream: typing.Generator[str, None, None],
 
 def print_stream_analytics(total: int, high_level: int, treasure: int, level_up: int, 
                           processing_time: float) -> None:
-    """Print stream analytics results."""
     print("=== Stream Analytics ===")
     print(f"Total events processed: {total}")
     print(f"High-level players (10+): {high_level}")
@@ -110,10 +100,8 @@ def print_stream_analytics(total: int, high_level: int, treasure: int, level_up:
 
 
 def print_generator_demonstrations() -> None:
-    """Demonstrate various generators."""
     print("=== Generator Demonstration ===")
     
-    # Fibonacci demonstration
     fib_gen: typing.Generator[int, None, None] = fibonacci_generator(10)
     fib_values: list[str] = []
     
@@ -122,7 +110,6 @@ def print_generator_demonstrations() -> None:
     
     print(f"Fibonacci sequence (first 10): {', '.join(fib_values)}")
     
-    # Prime numbers demonstration
     prime_gen: typing.Generator[int, None, None] = prime_generator(5)
     prime_values: list[str] = []
     
@@ -133,16 +120,13 @@ def print_generator_demonstrations() -> None:
 
 
 def main() -> None:
-    """Main function to run stream processor."""
     print_header()
     
     total_events: int = 1000
     print(f"Processing {total_events} game events...")
     
-    # Create event stream generator
     event_stream: typing.Generator[str, None, None] = game_event_generator(total_events)
     
-    # Process events and measure time
     start_time: float = time.time()
     total: int
     high_level: int
