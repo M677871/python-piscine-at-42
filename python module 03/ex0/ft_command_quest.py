@@ -2,17 +2,14 @@ import sys
 
 
 def print_header() -> None:
-    """Print application header."""
     print("=== Command Quest ===")
 
 
 def get_program_name() -> str:
-    """Get the program name from sys.argv."""
     return sys.argv[0]
 
 
 def get_total_arguments() -> int:
-    """Get total number of arguments including program name."""
     return len(sys.argv)
 
 
@@ -33,19 +30,19 @@ def print_no_arguments_info() -> None:
 def print_with_arguments_info() -> None:
     print(f"Program name: {get_program_name()}")
     print(f"Arguments received: {get_arguments_received()}")
-    
+
     arguments_count: int = get_arguments_received()
     i: int = 1
     while i <= arguments_count:
         print(f"Argument {i}: {sys.argv[i]}")
         i += 1
-    
+
     print(f"Total arguments: {get_total_arguments()}")
 
 
 def main() -> None:
     print_header()
-    
+
     if has_arguments():
         print_with_arguments_info()
     else:
