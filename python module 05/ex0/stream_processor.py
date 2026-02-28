@@ -1,5 +1,5 @@
 from abc import ABC, abstractmethod
-from typing import Any, List, Dict, Union, Optional
+from typing import Any, List, Dict, Union
 
 
 class DataProcessor(ABC):
@@ -105,7 +105,7 @@ class LogProcessor(DataProcessor):
         return parts[0].strip().upper(), parts[1].strip()
 
 
-# Helper functions for the demo 
+# Helper functions for the demo
 
 
 def _format_data_display(data: Any) -> str:
