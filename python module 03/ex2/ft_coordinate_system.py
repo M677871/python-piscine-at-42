@@ -30,32 +30,30 @@ def demonstrate_coordinate_creation() -> None:
     origin: Tuple[int, int, int] = tuple((0, 0, 0))
     pos1: Tuple[int, int, int] = tuple((10, 20, 5))
     print(f"Position created: {pos1}")
-    
+
     d1: float = distance_3d(origin, pos1)
     print(f"Distance between {origin} and {pos1}: {d1:.2f}")
     print()
 
 
 def demonstrate_coordinate_parsing() -> Tuple[int, int, int]:
-    """Demonstrate coordinate parsing from string."""
     origin: Tuple[int, int, int] = tuple((0, 0, 0))
     raw_ok: str = "3,4,0"
     print(f'Parsing coordinates: "{raw_ok}"')
-    
+
     pos2: Tuple[int, int, int] = parse_coordinates(raw_ok)
     print(f"Parsed position: {pos2}")
-    
+
     d2: float = distance_3d(origin, pos2)
     print(f"Distance between {origin} and {pos2}: {d2}")
-    
+
     return pos2
 
 
 def demonstrate_error_handling() -> None:
-    """Demonstrate error handling for invalid coordinates."""
     raw_bad: str = "abc,def,ghi"
     print(f"Parsing invalid coordinates: {raw_bad}")
-    
+
     try:
         parse_coordinates(raw_bad)
     except ValueError as e:
@@ -65,7 +63,6 @@ def demonstrate_error_handling() -> None:
 
 
 def demonstrate_unpacking(pos: Tuple[int, int, int]) -> None:
-    """Demonstrate tuple unpacking."""
     print("Unpacking demonstration:")
     x: int
     y: int
@@ -76,15 +73,14 @@ def demonstrate_unpacking(pos: Tuple[int, int, int]) -> None:
 
 
 def main() -> None:
-    """Main function to run coordinate system demonstrations."""
     print_header()
-    
+
     demonstrate_coordinate_creation()
-    
+
     pos2: Tuple[int, int, int] = demonstrate_coordinate_parsing()
-    
+
     demonstrate_error_handling()
-    
+
     demonstrate_unpacking(pos2)
 
 

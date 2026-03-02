@@ -3,12 +3,14 @@ from typing import Any, List, Dict, Union
 
 
 class DataProcessor(ABC):
+    """Abstract base class defining the common processing interface."""
+
     def __init__(self) -> None:
         self.processor_name: str = self.__class__.__name__
 
     @abstractmethod
     def process(self, data: Any) -> str:
-        pass
+        """Process data and return a result string."""
 
     @abstractmethod
     def validate(self, data: Any) -> bool:
@@ -19,6 +21,8 @@ class DataProcessor(ABC):
 
 
 class NumericProcessor(DataProcessor):
+    """Processor specialized for lists of numeric values."""
+
     def __init__(self) -> None:
         super().__init__()
 
@@ -28,6 +32,7 @@ class NumericProcessor(DataProcessor):
         return all(isinstance(x, (int, float)) for x in data)
 
     def process(self, data: Any) -> str:
+        """Compute count, sum, and average of numeric list."""
         if not self.validate(data):
             raise ValueError(
                 "NumericProcessor expects a non-empty list of numbers"
@@ -74,6 +79,7 @@ class LogProcessor(DataProcessor):
         return isinstance(data, str) and ":" in data
 
     def process(self, data: Any) -> str:
+        """Parse log level and message, apply appropriate prefix."""
         if not self.validate(data):
             raise ValueError(
                 "LogProcessor expects 'LEVEL: message' format"
