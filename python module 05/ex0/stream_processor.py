@@ -14,10 +14,9 @@ class DataProcessor(ABC):
 
     @abstractmethod
     def validate(self, data: Any) -> bool:
-        """Validate if data is appropriate for this processor."""
+        pass
 
     def format_output(self, result: str) -> str:
-        """Format the output string with a standard prefix."""
         return f"Output: {result}"
 
 
@@ -28,7 +27,6 @@ class NumericProcessor(DataProcessor):
         super().__init__()
 
     def validate(self, data: Any) -> bool:
-        """Check that data is a non-empty list of numbers."""
         if not isinstance(data, list) or not data:
             return False
         return all(isinstance(x, (int, float)) for x in data)
@@ -46,17 +44,13 @@ class NumericProcessor(DataProcessor):
 
 
 class TextProcessor(DataProcessor):
-    """Processor specialized for text strings."""
-
     def __init__(self) -> None:
         super().__init__()
 
     def validate(self, data: Any) -> bool:
-        """Check that data is a non-empty string."""
         return isinstance(data, str) and len(data) > 0
 
     def process(self, data: Any) -> str:
-        """Count characters and words in the text."""
         if not self.validate(data):
             raise ValueError(
                 "TextProcessor expects a non-empty string"
@@ -70,8 +64,6 @@ class TextProcessor(DataProcessor):
 
 
 class LogProcessor(DataProcessor):
-    """Processor specialized for log entries (LEVEL: message)."""
-
     LEVEL_PREFIXES: Dict[str, str] = {
         "ERROR": "[ALERT]",
         "WARN": "[WARN]",
@@ -84,7 +76,6 @@ class LogProcessor(DataProcessor):
         super().__init__()
 
     def validate(self, data: Any) -> bool:
-        """Check that data is a log string with a colon separator."""
         return isinstance(data, str) and ":" in data
 
     def process(self, data: Any) -> str:
@@ -100,12 +91,9 @@ class LogProcessor(DataProcessor):
         return f"{prefix} {level} level detected: {message}"
 
     def _parse_entry(self, data: str) -> tuple:
-        """Split a log entry into level and message components."""
         parts: List[str] = data.split(":", 1)
         return parts[0].strip().upper(), parts[1].strip()
 
-
-# Helper functions for the demo
 
 
 def _format_data_display(data: Any) -> str:
@@ -167,7 +155,6 @@ def _demonstrate_polymorphism(
 
 
 def main() -> None:
-    """Entry point – demonstrates the Data Processor Foundation."""
     print("=== CODE NEXUS- DATA PROCESSOR FOUNDATION ===")
 
     processors: List[DataProcessor] = [
