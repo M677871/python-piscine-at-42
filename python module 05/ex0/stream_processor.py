@@ -1,7 +1,6 @@
 from abc import ABC, abstractmethod
-from typing import Any, List, Dict, Union, Optional
+from typing import Any, List, Dict, Union
 
-Number = Union[int, float]
 
 class DataProcessor(ABC):
     def __init__(self) -> None:
@@ -12,54 +11,11 @@ class DataProcessor(ABC):
         pass
 
     @abstractmethod
-    def validate(str, data:Any) -> bool:
+    def validate(self, data: Any) -> bool:
         pass
 
     def format_output(self, result: str) -> str:
-        return f"Output from {self.processor_name}: {result}"
-    
-
-class TextProcessor(DataProcessor):
-    def __init__(self):
-        super().__init__()
-
-
-    def validate(str, data) -> bool:
-        if not isinstance(data, str):
-            return False
-        for _ in data:
-            return True
-        return False
-
-
-    def process(self, data: Any) -> str:
-        if not self.validate(data):
-            raise ValueError("TestProcessor expects a non-empty string.")
-        text: str = data
-        chars: int = self.ft_strlen(text)
-        words: int = self.count_words(text)
-        return f"Processed text: {chars} characters, {words} words"
-
-
-    def ft_strlen(self, s: str) -> int:
-        lenght: int = 0
-        for _ in s:
-            lenght += 1
-        return lenght
-
-
-    def count_words(self, s: str) -> int:
-        whitespace: str = " \t\n\r\f\v"
-        count: int = 0
-        in_word: bool = False
-        for ch in s:
-            if ch in whitespace:
-                in_word = False
-            else:
-                if not in_word:
-                    count += 1
-                    in_word = True
-        return count
+        return f"Output: {result}"
 
 
 class NumericProcessor(DataProcessor):
@@ -67,192 +23,159 @@ class NumericProcessor(DataProcessor):
         super().__init__()
 
     def validate(self, data: Any) -> bool:
-        if not isinstance(data, list):
+        if not isinstance(data, list) or not data:
             return False
-        return self._all_numbers(data)
+        return all(isinstance(x, (int, float)) for x in data)
 
     def process(self, data: Any) -> str:
         if not self.validate(data):
-            raise ValueError("NumericProcessor expects a list of numbers")
-
-        values: List[Number] = data
-        count: int = self._count_items(values)
-        if count == 0:
-            raise ValueError("NumericProcessor expects a non-empty list of numbers")
-
-        total: Number = self._sum_items(values)
-        avg: float = self._average(total, count)
+            raise ValueError(
+                "NumericProcessor expects a non-empty list of numbers"
+            )
+        count: int = len(data)
+        total: Union[int, float] = sum(data)
+        avg: float = total / count
         return f"Processed {count} numeric values, sum={total}, avg={avg}"
 
 
-    def _all_numbers(self, values: List[Any]) -> bool:
-        for x in values:
-            if not isinstance(x, (int, float)):
-                return False
-        return True
-
-    def _count_items(self, values: List[Number]) -> int:
-        c: int = 0
-        for _ in values:
-            c += 1
-        return c
-
-    def _sum_items(self, values: List[Number]) -> Number:
-        total: Number = 0
-        for x in values:
-            total = total + x
-        return total
-
-    def _average(self, total: Number, count: int) -> float:
-        return float(total) / float(count)
-
-
-class LogProcessor(DataProcessor):
+class TextProcessor(DataProcessor):
     def __init__(self) -> None:
         super().__init__()
-        self._level_prefix: Dict[str, str] = {
-            "ERROR": "[ALERT]",
-            "WARN": "[WARN]",
-            "WARNING": "[WARN]",
-            "INFO": "[INFO]",
-        }
 
     def validate(self, data: Any) -> bool:
-        if not isinstance(data, str):
-            return False
-        for ch in data:
-            if ch == ":":
-                return True
-        return False
+        return isinstance(data, str) and len(data) > 0
 
     def process(self, data: Any) -> str:
         if not self.validate(data):
-            raise ValueError("LogProcessor expects a string like 'LEVEL: message'")
+            raise ValueError(
+                "TextProcessor expects a non-empty string"
+            )
+        char_count: int = len(data)
+        word_count: int = len(data.split())
+        return (
+            f"Processed text: {char_count} characters, "
+            f"{word_count} words"
+        )
 
-        line: str = data
-        level_raw, message_raw = self._split_level_message(line)
 
-        level: str = self._to_upper(self._trim_spaces(level_raw))
-        message: str = self._trim_spaces(message_raw)
+class LogProcessor(DataProcessor):
+    LEVEL_PREFIXES: Dict[str, str] = {
+        "ERROR": "[ALERT]",
+        "WARN": "[WARN]",
+        "WARNING": "[WARN]",
+        "INFO": "[INFO]",
+        "DEBUG": "[DEBUG]",
+    }
 
-        if not self._has_any_char(level) or not self._has_any_char(message):
-            raise ValueError("Invalid log format (needs LEVEL: message)")
+    def __init__(self) -> None:
+        super().__init__()
 
-        prefix: str = self._prefix_for_level(level)
+    def validate(self, data: Any) -> bool:
+        return isinstance(data, str) and ":" in data
+
+    def process(self, data: Any) -> str:
+        if not self.validate(data):
+            raise ValueError(
+                "LogProcessor expects 'LEVEL: message' format"
+            )
+        level: str
+        message: str
+        level, message = self._parse_entry(data)
+        prefix: str = self.LEVEL_PREFIXES.get(level, "[INFO]")
         return f"{prefix} {level} level detected: {message}"
 
-    def _split_level_message(self, line: str) -> tuple[str, str]:
-        level_chars: List[str] = []
-        message_chars: List[str] = []
-        seen_colon: bool = False
+    def _parse_entry(self, data: str) -> tuple:
+        parts: List[str] = data.split(":", 1)
+        return parts[0].strip().upper(), parts[1].strip()
 
-        for ch in line:
-            if not seen_colon:
-                if ch == ":":
-                    seen_colon = True
-                else:
-                    level_chars.append(ch)
-            else:
-                message_chars.append(ch)
 
-        if not seen_colon:
-            raise ValueError("Invalid log format (missing ':')")
 
-        return self._join_chars(level_chars), self._join_chars(message_chars)
+def _format_data_display(data: Any) -> str:
+    """Format data for display (double-quotes for strings)."""
+    if isinstance(data, str):
+        return f'"{data}"'
+    return repr(data)
 
-    def _join_chars(self, chars: List[str]) -> str:
-        out: str = ""
-        for ch in chars:
-            out = out + ch
-        return out
 
-    def _trim_spaces(self, text: str) -> str:
-        whitespace: str = " \t\n\r\v\f"
-        start: int = 0
-        end: int = 0
-        idx: int = 0
-        last_index: int = -1
+def _validation_label(processor: DataProcessor) -> str:
+    """Return a human-readable validation label per processor."""
+    labels: Dict[str, str] = {
+        "NumericProcessor": "Numeric data verified",
+        "TextProcessor": "Text data verified",
+        "LogProcessor": "Log entry verified",
+    }
+    return labels.get(processor.processor_name, "Data verified")
 
-        for _ in text:
-            last_index += 1
 
-        # left trim
-        for ch in text:
-            if ch in whitespace:
-                start += 1
-            else:
-                break
+def _init_label(processor: DataProcessor) -> str:
+    """Return a human-readable initialisation label."""
+    labels: Dict[str, str] = {
+        "NumericProcessor": "Numeric",
+        "TextProcessor": "Text",
+        "LogProcessor": "Log",
+    }
+    return labels.get(processor.processor_name, "Data")
 
-        # right trim
-        end = last_index
-        if last_index >= 0:
-            i: int = 0
-            # walk to end again to allow reverse-like indexing without len()
-            chars: List[str] = []
-            for ch in text:
-                chars.append(ch)
-                i += 1
-            while end >= start and chars[end] in whitespace:
-                end -= 1
-            return self._slice_chars(chars, start, end)
 
-        return ""
+def _demonstrate_individual(
+    processors: List[DataProcessor],
+    inputs: List[Any],
+) -> None:
+    """Show each processor handling its specific data type."""
+    for processor, data in zip(processors, inputs):
+        print(f"\nInitializing {_init_label(processor)} Processor...")
+        print(f"Processing data: {_format_data_display(data)}")
+        print(f"Validation: {_validation_label(processor)}")
+        try:
+            result: str = processor.process(data)
+            print(processor.format_output(result))
+        except (TypeError, ValueError) as exc:
+            print(processor.format_output(f"[ERROR] {exc}"))
 
-    def _slice_chars(self, chars: List[str], start: int, end: int) -> str:
-        out: str = ""
-        i: int = 0
-        for ch in chars:
-            if i >= start and i <= end:
-                out = out + ch
-            i += 1
-        return out
 
-    def _to_upper(self, text: str) -> str:
-        # use built-in upper()
-        return text.upper()
-
-    def _has_any_char(self, text: str) -> bool:
-        for _ in text:
-            return True
-        return False
-
-    def _prefix_for_level(self, level: str) -> str:
-        # avoid dict.get() if you want ultra-basic
-        for k in self._level_prefix:
-            if k == level:
-                return self._level_prefix[k]
-        return "[INFO]"
+def _demonstrate_polymorphism(
+    processors: List[DataProcessor],
+    inputs: List[Any],
+) -> None:
+    """Process mixed data types through the same interface."""
+    print("\n=== Polymorphic Processing Demo ===")
+    print("Processing multiple data types through same interface...")
+    for idx, (proc, data) in enumerate(zip(processors, inputs), 1):
+        try:
+            result: str = proc.process(data)
+            print(f"Result {idx}: {result}")
+        except (TypeError, ValueError) as exc:
+            print(f"Result {idx}: [ERROR] {exc}")
 
 
 def main() -> None:
     print("=== CODE NEXUS- DATA PROCESSOR FOUNDATION ===")
 
-    processors: List[DataProcessor] = [NumericProcessor(), TextProcessor(), LogProcessor()]
-    inputs: List[Any] = [[1, 2, 3, 4, 5], "Hello Nexus World", "ERROR: Connection timeout"]
+    processors: List[DataProcessor] = [
+        NumericProcessor(),
+        TextProcessor(),
+        LogProcessor(),
+    ]
+    inputs: List[Any] = [
+        [1, 2, 3, 4, 5],
+        "Hello Nexus World",
+        "ERROR: Connection timeout",
+    ]
+    _demonstrate_individual(processors, inputs)
 
-    for p, d in zip(processors, inputs):
-        print(f"Processing data: {d!r}")
-        print(f"Validation: {p.validate(d)}")
-        try:
-            result: str = p.process(d)
-            print(p.format_output(result))
-        except (TypeError, ValueError) as exc:
-            print(p.format_output(f"[ERROR] {exc}"))
+    poly_processors: List[DataProcessor] = [
+        NumericProcessor(),
+        TextProcessor(),
+        LogProcessor(),
+    ]
+    poly_inputs: List[Any] = [
+        [1, 2, 3],
+        "Hello Nexus!",
+        "INFO: System ready",
+    ]
+    _demonstrate_polymorphism(poly_processors, poly_inputs)
 
-    print("=== Polymorphic Processing Demo ===")
-    mixed_processors: List[DataProcessor] = [NumericProcessor(), TextProcessor(), LogProcessor()]
-    mixed_inputs: List[Any] = [[1, 2, 3], "Hello Nexus", "INFO: System ready"]
-
-    idx: int = 1
-    for p, d in zip(mixed_processors, mixed_inputs):
-        try:
-            result = p.process(d)
-            print(f"Result {idx}: {result}")
-        except (TypeError, ValueError) as exc:
-            print(f"Result {idx}: [ERROR] {exc}")
-        idx += 1
-
-    print("Foundation systems online. Nexus ready for advanced streams.")
+    print("\nFoundation systems online. Nexus ready for advanced streams.")
 
 
 if __name__ == "__main__":
