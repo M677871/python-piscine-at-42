@@ -79,7 +79,12 @@ Replace the filename with the script you want to execute (for example, `ft_plot_
 | Module           | Status         |
 |------------------|--------------- |
 | Python Module 00 | Completed   ✅ |
-| Python Module 01 | In progress 🔄 |
+| Python Module 01 | Completed   ✅ |
+| Python Module 02 | Completed   ✅ |
+| Python Module 03 | Completed   ✅ |
+| Python Module 04 | Completed   ✅ |
+| Python Module 05 | Completed   ✅ |
+| Python Module 06 | In progress 🔄 |
 | Next modules     | Pending     ⏳ |
 
 Progress is updated manually as exercises are completed.
