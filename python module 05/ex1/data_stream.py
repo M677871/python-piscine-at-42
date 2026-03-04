@@ -36,7 +36,9 @@ def is_number(x: Any) -> bool:
         return False
 
 
-def add_numbers(total: Union[int, float], x: Union[int, float]) -> Union[int, float]:
+def add_numbers(
+    total: Union[int, float], x: Union[int, float]
+) -> Union[int, float]:
     return total + x
 
 
@@ -109,7 +111,9 @@ class DataStream(ABC):
     def process_batch(self, data_batch: List[Any]) -> str:
         pass
 
-    def filter_data(self, data_batch: List[Any], criteria: Optional[str] = None) -> List[Any]:
+    def filter_data(
+        self, data_batch: List[Any], criteria: Optional[str] = None
+    ) -> List[Any]:
         _ = criteria
         return copy_list(data_batch)
 
@@ -138,7 +142,9 @@ class SensorStream(DataStream):
             return base
         return f"{base}, avg temp: {avg_temp}°C"
 
-    def filter_data(self, data_batch: List[Any], criteria: Optional[str] = None) -> List[Any]:
+    def filter_data(
+        self, data_batch: List[Any], criteria: Optional[str] = None
+    ) -> List[Any]:
         if criteria == "critical":
             out: List[Any] = []
             for item in data_batch:
@@ -192,7 +198,9 @@ class TransactionStream(DataStream):
             sign = "-"
         return f"{n} operations, net flow: {sign}{abs_number(net)} units"
 
-    def filter_data(self, data_batch: List[Any], criteria: Optional[str] = None) -> List[Any]:
+    def filter_data(
+        self, data_batch: List[Any], criteria: Optional[str] = None
+    ) -> List[Any]:
         if criteria == "large":
             out: List[Any] = []
             for item in data_batch:
@@ -213,7 +221,9 @@ class TransactionStream(DataStream):
             return
         raise ValueError("Empty transaction batch")
 
-    def _net_flow_if_possible(self, data_batch: List[Any]) -> Tuple[Union[int, float], bool]:
+    def _net_flow_if_possible(
+        self, data_batch: List[Any]
+    ) -> Tuple[Union[int, float], bool]:
         flow: Union[int, float] = 0
         found_action: bool = False
 
@@ -251,7 +261,9 @@ class EventStream(DataStream):
             label = "errors"
         return f"{n} events, {errors} {label} detected"
 
-    def filter_data(self, data_batch: List[Any], criteria: Optional[str] = None) -> List[Any]:
+    def filter_data(
+        self, data_batch: List[Any], criteria: Optional[str] = None
+    ) -> List[Any]:
         if criteria == "error":
             out: List[Any] = []
             for item in data_batch:
@@ -319,7 +331,10 @@ def demo_individual() -> None:
 
     print("Initializing Transaction Stream...")
     print(f"Stream ID: {trans.stream_id}, Type: {trans.stream_type}")
-    print(f"Processing transaction batch: {format_transaction_batch(trans_data)}")
+    print(
+        f"Processing transaction batch: "
+        f"{format_transaction_batch(trans_data)}"
+    )
     print(f"Transaction analysis: {trans.process_batch(trans_data)}")
 
     event = EventStream("EVENT_001")
@@ -385,7 +400,8 @@ def demo_polymorphic() -> None:
         criteria="large",
     )
     print(
-        f"Filtered results: {count_list(sensor_critical)} critical sensor alerts, "
+        f"Filtered results: "
+        f"{count_list(sensor_critical)} critical sensor alerts, "
         f"{count_list(trans_large)} large transaction"
     )
 

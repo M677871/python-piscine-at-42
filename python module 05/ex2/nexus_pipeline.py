@@ -14,7 +14,6 @@ from typing import (
 )
 
 
-
 def count_items(items: List[Any]) -> int:
     c: int = 0
     for _ in items:
@@ -52,7 +51,6 @@ def avg_numeric(total: Union[int, float], n: int) -> Optional[float]:
     if n == 0:
         return None
     return total / n
-
 
 
 @runtime_checkable
@@ -102,7 +100,6 @@ class ProcessingPipeline(ABC):
         }
 
 
-
 class InputStage:
     def process(self, data: Any) -> Any:
         if isinstance(data, dict):
@@ -130,7 +127,6 @@ class OutputStage:
             raise ValueError("Invalid data format")
         data["finalized"] = True
         return data
-
 
 
 class JSONAdapter(ProcessingPipeline):
@@ -248,7 +244,6 @@ class StreamAdapter(ProcessingPipeline):
         return f"Stream summary: {count} readings, avg: {avg}°C"
 
 
-
 class NexusManager:
     def __init__(self) -> None:
         self.pipelines: OrderedDict[str, ProcessingPipeline] = OrderedDict()
@@ -281,7 +276,6 @@ class NexusManager:
     def get_all_stats(self) -> Dict[str, Dict[str, Any]]:
         # dict comprehension (required by subject)
         return {pid: p.get_stats() for pid, p in self.pipelines.items()}
-
 
 
 def build_pipeline(p: ProcessingPipeline) -> None:
