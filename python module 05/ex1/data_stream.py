@@ -57,7 +57,7 @@ def contains_error(text: str) -> bool:
     return "error" in text.lower()
 
 
-def format_batch(batch: List[Any]) -> str:
+def format_sensor_batch(batch: List[Any]) -> str:
     # Output: [temp:22.5, humidity:65, pressure:1013]
     s: str = "["
     first: bool = True
@@ -68,6 +68,21 @@ def format_batch(batch: List[Any]) -> str:
             if not first:
                 s += ", "
             s += f"{t}:{v}"
+            first = False
+    s += "]"
+    return s
+
+
+def format_transaction_batch(batch: List[Any]) -> str:
+    s: str = "["
+    first: bool = True
+    for item in batch:
+        if safe_is_dict(item):
+            act = dict_value(item, "action", "?")
+            amt = dict_value(item, "amount", "?")
+            if not first:
+                s += ", "
+            s += f"{act}:{amt}"
             first = False
     s += "]"
     return s
@@ -161,7 +176,7 @@ class SensorStream(DataStream):
                 if t == "temp" and is_number(v):
                     total = add_numbers(total, v)
                     c += 1
-        return avg_numbers(total, v)
+        return avg_numbers(total, c)
 
 
 
@@ -207,7 +222,7 @@ class TransactionStream(DataStream):
             return
         raise ValueError("Empty transaction batch")
 
-    def _net_flow_if_possible(self, data_batch: List[Any]) -> (Union[int, float], bool):
+    def _net_flow_if_possible(self, data_batch: List[Any]) -> tuple[(Union[int, float], bool)]:
         flow: Union[int, float] = 0
         found_action: bool = False
 
@@ -307,7 +322,92 @@ def demo_individual() -> None:
 
     print("Initializing Sensor Stream...")
     print(f"Stream ID: {sensor.stream_id}, Type: {sensor.stream_type}")
-    print(f"processing sensor batch: {format_batch(sensor_data)}")
+    print(f"processing sensor batch: {format_sensor_batch(sensor_data)}")
     print(f"Sensor analysis: {sensor.process_batch(sensor_data)}")
 
     trans = TransactionStream("TRANS_001")
+    trans_data: List[Any] = [
+        {"action": "buy", "amount": 100},
+        {"action": "sell", "amount": 150},
+        {"action": "buy", "amount": 75}
+    ]
+
+    print("Initializing Transaction Stream ...")
+    print(f"Stream ID: {trans.stream_id}, Type: {trans.stream_type}")
+    print(f"Processing transaction batch: {format_transaction_batch(trans_data)}")
+    print(f"Transaction analysis: {trans.process_batch(trans_data)}")
+
+    event = EventStream("EVENT_001")
+    event_data: List[Any] = ["login", "error", "logout"]
+
+    print("Initializing Event Stream ...")
+    print(f"Stream ID: {event.stream_id}, Type: {event.stream_type}")
+    print(f"Processing event batch: {format_event_batch(event_data)}")
+    print(f"Event analysis: {event.process_batch(event_data)}")
+
+def print_batch_results(results: List[str]) -> None:
+    print("Batch 1 Results:")
+    print(f"- Sensor data: {results[0]}")
+    print(f"- Transaction data: {results[1]}")
+    print(f"- Event data: {results[2]}")
+
+
+def demo_polymorphic() -> None:
+    print("=== Polymorphic Stream Pocessing ===")
+    print("Processing mixed stream types through unified interface...")
+
+    processor = StreamProcessor()
+    sensor = SensorStream("SENSOR_002")
+    trans = TransactionStream("TRANS_002")
+    event = EventStream("EVENT_002")
+
+    processor.add_stream(sensor)
+    processor.add_stream(trans)
+    processor.add_stream(event)
+
+    batches: Dict[str, List[Any]] = {
+        "SENSOR_002": [
+            {"type": "humidity", "value": 60},
+            {"type": "pressure", "value": 1012}
+        ],
+        "TRANS_002": [
+            {"amount": 200},
+            {"amount": 50},
+            {"amount": 100},
+            {"amount": 75}
+        ],
+        "EVENT_002": ["login", "update", "logout"]
+    }
+
+    results = processor.process_all(batches)
+    print_batch_results(results)
+
+    print("Stream filtering active: High-priority data only")
+    sensor_critical = sensor.filter_data(
+        [
+            {"type": "temp", "value": 35.0},
+            {"type": "temp", "value": 40.0},
+            {"type": "temp", "value": 20.0},
+        ],
+        criteria="critical",
+    )
+    trans_large = trans.filter_data(
+        [
+            {"action": "buy", "amount": 500},
+            {"action": "sell", "amount": 50},
+        ],
+        criteria="large",
+    )
+    print(f"Filtered results: {count_list(sensor_critical)} critical sensor alerts, "
+          f"{count_list(trans_large)} large transaction")
+
+
+def main() -> None:
+    print("=== CODE NEXUS - POLYMORPHIC STREAM SYSTEM ===")
+    demo_individual()
+    demo_polymorphic()
+    print("All streams processed successfully. Nexus throughput optimal.")
+
+
+if __name__ == "__main__":
+    main()
