@@ -1,34 +1,123 @@
 import sys
-
-def print_header() -> None:
-    print("=== CYBER ARCHIVES- COMMUNICATION SYSTEM ===")
+import typing
 
 
-def ask(prompt: str) -> str:
-    answer: str = input(prompt)
-    return answer
+def print_usage() -> None:
+    print("Usage: ft_stream_management.py <file>")
 
 
-def write_standard(message: str) -> None:
-    sys.stdout.write(message + "\n")
+def write_error(message: str) -> None:
+    sys.stderr.write(f"[STDERR] {message}\n")
 
 
-def write_alert(message: str) -> None:
-    sys.stderr.write(message + "\n")
+def print_content_block(content: str) -> None:
+    print("-----")
+    print(content, end="")
+    if content != "" and content[-1] != "\n":
+        print()
+    print("-----")
 
 
-def main() -> None:
-    print_header()
+def close_archive(
+    archive: typing.IO[str],
+    file_name: str,
+    announce: bool,
+) -> bool:
+    try:
+        archive.close()
+    except OSError as error:
+        write_error(f"Error closing file '{file_name}': {error}")
+        return False
+    if announce:
+        print(f"File '{file_name}' closed.")
+    return True
 
-    id: str = ask("Input Stream active. Enter archivist ID: ")
-    status: str = ask("Input Stream active. Enter status report: ")
 
-    write_standard(f"[STANDARD] Archive status from {id}: {status}")
-    write_alert("[ALERT] System diagnostic: Communication channels verified")
-    write_standard("[STANDARD] Data transmission complete")
+def read_archive(file_name: str) -> tuple[bool, str]:
+    archive: typing.IO[str] | None = None
 
-    print("Three-channel communication test successful.")
+    print(f"Accessing file '{file_name}'")
+    try:
+        archive = open(file_name)
+        content: str = archive.read()
+        print_content_block(content)
+    except (OSError, UnicodeError) as error:
+        write_error(f"Error opening file '{file_name}': {error}")
+        return False, ""
+    finally:
+        if archive is not None:
+            if not close_archive(archive, file_name, True):
+                return False, ""
+    return True, content
+
+
+def add_archive_markers(content: str) -> str:
+    transformed: str = ""
+
+    for line in content.splitlines(True):
+        if line.endswith("\r\n"):
+            transformed += line[:-2] + "#\r\n"
+        elif line.endswith("\n"):
+            transformed += line[:-1] + "#\n"
+        elif line.endswith("\r"):
+            transformed += line[:-1] + "#\r"
+        else:
+            transformed += line + "#"
+    return transformed
+
+
+def read_file_name() -> str:
+    sys.stdout.write("Enter new file name (or empty): ")
+    sys.stdout.flush()
+    file_name: str = sys.stdin.readline()
+    if file_name.endswith("\n"):
+        file_name = file_name[:-1]
+    if file_name.endswith("\r"):
+        file_name = file_name[:-1]
+    return file_name
+
+
+def save_archive(file_name: str, content: str) -> bool:
+    archive: typing.IO[str] | None = None
+    closed: bool = True
+
+    print(f"Saving data to '{file_name}'")
+    try:
+        archive = open(file_name, "w")
+        archive.write(content)
+    except OSError as error:
+        write_error(f"Error opening file '{file_name}': {error}")
+        return False
+    finally:
+        if archive is not None:
+            closed = close_archive(archive, file_name, False)
+    if not closed:
+        return False
+    print(f"Data saved in file '{file_name}'.")
+    return True
+
+
+def main(argv: list[str]) -> None:
+    if len(argv) != 2:
+        print_usage()
+        return
+
+    print("=== Cyber Archives Recovery & Preservation ===")
+    success, content = read_archive(argv[1])
+    if not success:
+        return
+
+    transformed: str = add_archive_markers(content)
+    print("Transform data:")
+    print_content_block(transformed)
+
+    new_file_name: str = read_file_name()
+    if new_file_name == "":
+        print("Not saving data.")
+        return
+    if not save_archive(new_file_name, transformed):
+        print("Data not saved.")
 
 
 if __name__ == "__main__":
-    main()
+    main(sys.argv)
