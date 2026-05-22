@@ -1,32 +1,48 @@
-def print_header() -> None:
-    print("=== CYBER ARCHIVES - DATA RECOVERY SYSTEM ===")
+import sys
+import typing
 
 
-def read_whole_file(filename: str) -> str:
-    f: object = open(filename, "r")
-    content: str = f.read()
-    f.close()
-    return content
-
-def print_recovered_data(data: str) -> None:
-    print("RECOVERED DATA:")
-    print(data, end="")
+def print_usage() -> None:
+    print("Usage: ft_ancient_text.py <file>")
 
 
-def main() -> None:
-    filename: str = "ancient_fragment.txt"
-    print_header()
-    print(f"Accessing Storage vault: {filename}")
+def print_content_block(content: str) -> None:
+    print("-----")
+    print(content, end="")
+    if content != "" and content[-1] != "\n":
+        print()
+    print("-----")
 
+
+def close_archive(archive: typing.IO[str], file_name: str) -> None:
     try:
-        print("connection established...")
-        data: str = read_whole_file(filename)
-        print_recovered_data(data)
-        print("Data recovery complete. Storage unit disconnected.")
-    except FileNotFoundError:
-        print(f"Error: Storage vault not found: Run data generator first.")
+        archive.close()
+        print(f"File '{file_name}' closed.")
+    except OSError as error:
+        print(f"Error closing file '{file_name}': {error}")
+
+
+def recover_file(file_name: str) -> None:
+    archive: typing.IO[str] | None = None
+
+    print("=== Cyber Archives Recovery ===")
+    print(f"Accessing file '{file_name}'")
+    try:
+        archive = open(file_name)
+        print_content_block(archive.read())
+    except (OSError, UnicodeError) as error:
+        print(f"Error opening file '{file_name}': {error}")
+    finally:
+        if archive is not None:
+            close_archive(archive, file_name)
+
+
+def main(argv: list[str]) -> None:
+    if len(argv) != 2:
+        print_usage()
+        return
+    recover_file(argv[1])
 
 
 if __name__ == "__main__":
-    main()
-
+    main(sys.argv)
