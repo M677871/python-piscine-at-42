@@ -84,7 +84,8 @@ Replace the filename with the script you want to execute (for example, `ft_plot_
 | Python Module 03 | Completed   ✅ |
 | Python Module 04 | Completed   ✅ |
 | Python Module 05 | Completed   ✅ |
-| Python Module 06 | In progress 🔄 |
+| Python Module 06 | Completed   ✅ |
+| Python Module 07 | In progress 🔄 |
 | Next modules     | Pending     ⏳ |
 
 Progress is updated manually as exercises are completed.
