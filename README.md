@@ -62,11 +62,18 @@ Replace the filename with the script you want to execute (for example, `ft_plot_
 ## Skills & concepts covered
 
 - Python syntax and execution model
-- Function design and modularity
-- Primitive and compound data types (lists, tuples, dicts)
+- Functions, modules, and package organization
+- Primitive and compound data types
 - Conditional logic and iteration
-- Simple I/O and validation
-- Writing clear, testable, evaluator-friendly code
+- Object-oriented programming (classes, inheritance, polymorphism)
+- Functional programming (lambda, decorators, generators)
+- Context managers and advanced Python features
+- Type hints and code quality practices
+- NumPy arrays and numerical computing
+- Pandas DataFrames and data analysis
+- Data cleaning, transformation, and aggregation
+- Debugging, testing, and validation
+- Writing clear, modular, evaluator-friendly code
 
 ## Coding standards
 
@@ -85,10 +92,10 @@ Replace the filename with the script you want to execute (for example, `ft_plot_
 | Python Module 04 | Completed   ✅ |
 | Python Module 05 | Completed   ✅ |
 | Python Module 06 | Completed   ✅ |
-| Python Module 07 | In progress 🔄 |
-| Next modules     | Pending     ⏳ |
-
-Progress is updated manually as exercises are completed.
+| Python Module 07 | Completed   ✅ |
+| Python Module 08 | Completed   ✅ |
+| Python Module 09 | Completed   ✅ |
+| Python Module 10 | Completed   ✅ |
 
 ## Author
 
